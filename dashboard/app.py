@@ -178,4 +178,4 @@ def display_output(n_clicks, url):
 app.layout = html.Div([sidebar, content])
 
 if __name__ == '__main__':
-    app.run_server(port=8080, debug=True)
+    app.run_server(host='0.0.0.0', port=80, debug=False)
