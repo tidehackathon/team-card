@@ -1,0 +1,10 @@
+# Data and other important folders
+resources
+
+# Virtual environments
+.venv
+.env
+
+# Python
+__pycache__
+.pytest_cache
