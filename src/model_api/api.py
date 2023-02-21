@@ -8,7 +8,7 @@ app = FastAPI()
 
 @app.get("/")
 async def root():
-    return {"info": "This is a disinformation detection model API"}
+    return {"info": "This is a disinformation detection deep learning model API"}
 
 @app.post("/check_fake/")
 async def check_fraud(items: Article):

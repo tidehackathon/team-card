@@ -22,8 +22,6 @@ for index, title in enumerate(cases_titles):
 df = df.replace(to_replace=r'\n', value='', regex=True)
 df = df.replace(to_replace=r'\r', value='', regex=True)
 df['case'] = df.case.str.lower()
-# TODO: RUN python -m nltk.downloader stopwords
-# TODO: RUN python -m nltk.downloader 'punkt'
 unique_cases = [remove_stopwords(word_tokenize(case)) for case in list(df.case)]
 
 

@@ -1,6 +1,5 @@
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch.nn.functional as F
-import matplotlib.pyplot as plt
 from lime.lime_text import LimeTextExplainer
 
 class_names = ["fake", "real"]
