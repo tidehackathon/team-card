@@ -10,4 +10,4 @@ run-tests:
 	${PYTHON} -m pytest 
 
 setup-local-api:
-	uvicorn src.api:app --reload
+	uvicorn src.model_api.api:app --reload
