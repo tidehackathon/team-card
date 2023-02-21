@@ -1,7 +1,7 @@
 import pandas as pd
 from preprocessing.preprocessing import remove_links, remove_punct, remove_double_spaces, remove_html_tags
 
-df = pd.read_csv('../data/articles.csv', index_col=[0])
+df = pd.read_csv('../data/all-articles.csv', index_col=[0])
 
 # Remove empty, duplicates
 df = df.dropna()
@@ -18,7 +18,7 @@ for index, row in df.iterrows():
     df.at[index, 'articles'] = sentence_without_links
 
 # Remove html tags
-remove_html_tags(df.articles)
+df['articles'] = remove_html_tags(df.articles)
 
 # Remove punctuation 
 for index, row in df.iterrows():
@@ -27,6 +27,6 @@ for index, row in df.iterrows():
     df.at[index, 'articles'] = sentence_without_punctuation
 
 # Remove double spaces    
-df=remove_double_spaces(df, 'articles')
+df['articles']=remove_double_spaces(df, 'articles')
 
-print(df)
+df.to_csv('../data/articles-labeled.csv')
