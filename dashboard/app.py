@@ -1,9 +1,17 @@
+import json
+
 from dash import Dash, html, dcc, Input, Output, State
 import plotly.graph_objs as go
 import plotly.io as pio
+import plotly.express as px
+import pandas as pd
 import newspaper
 
 from api_request import *
+
+import pandas as pd
+import plotly.graph_objects as go
+import numpy as np
 
 pio.templates.default = "plotly_dark"  # set the default theme to dark
 # sample data
@@ -57,32 +65,32 @@ parameters = html.Div([
     ], placeholder="select city", id='demo-dropdown', className="dropdown"),
     html.P("Range Slider"),
     dcc.RangeSlider(
-            id='range_slider',
-            min=0,
-            max=20,
-            step=5,
-            value=[5, 15]
-        ),
+        id='range_slider',
+        min=0,
+        max=20,
+        step=5,
+        value=[5, 15]
+    ),
     html.P("Check Box"),
     dcc.Checklist(
-            id='check_list',
-            options=[{
-                'label': 'Value One',
-                'value': 'value1'
+        id='check_list',
+        options=[{
+            'label': 'Value One',
+            'value': 'value1'
+        },
+            {
+                'label': 'Value Two',
+                'value': 'value2'
             },
-                {
-                    'label': 'Value Two',
-                    'value': 'value2'
-                },
-                {
-                    'label': 'Value Three',
-                    'value': 'value3'
-                }
-            ],
-            value=['value1', 'value2'],
-            inline=False,
-            style={"display": "flex", "flex-direction": "column"},
-        ),
+            {
+                'label': 'Value Three',
+                'value': 'value3'
+            }
+        ],
+        value=['value1', 'value2'],
+        inline=False,
+        style={"display": "flex", "flex-direction": "column"},
+    ),
     html.Button("Apply", style={"margin-top": "30px"}),
 ], style={"text-align": "center"})
 
@@ -127,7 +135,7 @@ content = html.Div([
 
 
 @app.callback(Output('tabs-content', 'children'),
-              Input('tabs', 'value'))
+              Input('tabs', 'value'),)
 def render_content(tab):
     if tab == 'tab-1':
         return html.Div([
@@ -166,18 +174,24 @@ def render_content(tab):
 
 @app.callback(
     Output('output-container', 'children'),
-    Output('url-input', 'value'),
+    # Output('url-input', 'value'),
     Input('submit-button', 'n_clicks'),
     State('url-input', 'value'),
 )
 def display_output(n_clicks, url):
-    article = url_to_article(url)
-    print(model_request(article.title))
+    # article = url_to_article(url)
+    res = model_request("this is a test can you make something out of it")
+    dict_data = json.loads(res.text.lower())
+    # print(dict_data['explanation'])
+    df = pd.DataFrame(dict_data['explanation'])
+    # print(df)
+    image = px.bar(df, x=0, y=1)
+    # create a scatter plot using Plotly Express
     if n_clicks > 0:
-        return f'Your provided article title is: "{article.title}"\n\n\n\n\nand it\'s content: \n"{article.text}".', ''
+        return dcc.Graph(id='bar-chart', figure=image)
 
 
 app.layout = html.Div([sidebar, content])
 
 if __name__ == '__main__':
-    app.run_server(host='0.0.0.0', port=80, debug=False)
+    app.run_server(host='0.0.0.0', port=80, debug=True)

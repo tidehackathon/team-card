@@ -8,5 +8,5 @@ def api_request_info():
 
 def model_request(article_text):
     text_dict = {"article_text": article_text}
-    response = requests.post('http://disinfo_api:80/check_fake/', json=text_dict)
-    return response.text
+    response = requests.post('http://localhost:11111/check_fake/', json=text_dict)
+    return response
