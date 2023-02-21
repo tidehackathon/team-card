@@ -1,2 +1,5 @@
 sentence-transformers==2.2.2
 pandas==1.5.3
+nltk==3.8.1
+uvicorn==0.20.0
+fastapi==0.92.0

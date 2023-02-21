@@ -12,10 +12,12 @@ with open('embeddings/cases_embeddings.npy', 'rb') as f:
 with open('embeddings/cases_content.json', "r") as f:
     cases_content = json.load(f)
 
-query = "Hugging Face makes it easy to collaboratively build and showcase your Sentence Transformers models! You can collaborate with your organization, upload and showcase your own models in your profile"
 model = SentenceTransformer('bert-base-nli-mean-tokens')
 cases_text = [item['content'] for item in cases_content]
-    
+
+# Query for testing
+query = "i think some are actual russian bots to antagonize other nations citizens against ukraine to support russia"
+
 
 def remove_stopwords(sentence):
     return " ".join([word for word in sentence if word not in set(stopwords.words('english'))])
@@ -23,11 +25,11 @@ def remove_stopwords(sentence):
 def cosined(a,b):
     return np.dot(a, b)/(np.linalg.norm(a)*np.linalg.norm(b))
 
-def get_top_n(diction, n):
+def get_top_n(diction, n=10):
     topitems = heapq.nlargest(n, diction.items(), key=itemgetter(1))
     return dict(topitems)
 
-def get_top_similar(query, n=5):
+def get_top_similar(query, thresh=0.88):
     query = remove_stopwords(word_tokenize(query))
     query_encoded = model.encode(query)
 
@@ -38,11 +40,13 @@ def get_top_similar(query, n=5):
     if query in distance_dictionary.keys():
         _ = distance_dictionary.pop(query)
     
-    top_cases = get_top_n(distance_dictionary, n)
+    top_cases = get_top_n(distance_dictionary, 20)
     results = []
     for key in top_cases.keys():
+        if top_cases.get(key) < thresh:
+            continue
         results.append({
-            "score": top_cases.get(key),
+            "score": float(top_cases.get(key)),
             "title": [item.get("title") for item in cases_content if item.get("content") == key][0],
             "content": key
         })
