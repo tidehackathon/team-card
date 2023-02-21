@@ -9,5 +9,3 @@ create-virtualenv:
 run-tests:
 	${PYTHON} -m pytest 
 
-setup-local-api:
-	uvicorn src.model_api.api:app --reload

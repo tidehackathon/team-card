@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 import numpy as np
 import json
-from src.model_api.classes import Article
-from .predict import predictor, get_explanation
+from classes import Article
+from predict import predictor, get_explanation
 
 app = FastAPI()
 

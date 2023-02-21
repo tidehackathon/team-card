@@ -1,4 +1,4 @@
-from predict import predictor, get_explanation
+from model_api.predict import predictor, get_explanation
 from langdetect import detect
 import pandas as pd
 import numpy as np
