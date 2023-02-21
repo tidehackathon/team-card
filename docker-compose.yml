@@ -7,3 +7,12 @@ services:
     ports:
       - 80:80
     command: python3 /app/app.py
+
+  disinfo_api: 
+    build: 
+      context: .
+      dockerfile: ./src/model_api/Dockerfile
+      network: host
+    ports:
+      - 11111:80
+
