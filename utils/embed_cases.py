@@ -1,8 +1,14 @@
 import numpy as np
 import pandas as pd
 from sentence_transformers import SentenceTransformer
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
 import warnings
 import json
+
+
+def remove_stopwords(sentence):
+    return " ".join([word for word in sentence if word not in set(stopwords.words('english'))])
 
 df = pd.read_csv("resources/disinfo_cases.csv")
 unique_cases_upper = np.array(df.case)
@@ -16,7 +22,10 @@ for index, title in enumerate(cases_titles):
 df = df.replace(to_replace=r'\n', value='', regex=True)
 df = df.replace(to_replace=r'\r', value='', regex=True)
 df['case'] = df.case.str.lower()
-unique_cases = list(df.case)
+# TODO: RUN python -m nltk.downloader stopwords
+# TODO: RUN python -m nltk.downloader 'punkt'
+unique_cases = [remove_stopwords(word_tokenize(case)) for case in list(df.case)]
+
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")

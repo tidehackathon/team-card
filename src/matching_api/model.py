@@ -1,6 +1,8 @@
 import numpy as np
 import heapq
 import json
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
 from operator import itemgetter
 from sentence_transformers import SentenceTransformer
 
@@ -15,6 +17,9 @@ model = SentenceTransformer('bert-base-nli-mean-tokens')
 cases_text = [item['content'] for item in cases_content]
     
 
+def remove_stopwords(sentence):
+    return " ".join([word for word in sentence if word not in set(stopwords.words('english'))])
+
 def cosined(a,b):
     return np.dot(a, b)/(np.linalg.norm(a)*np.linalg.norm(b))
 
@@ -23,6 +28,7 @@ def get_top_n(diction, n):
     return dict(topitems)
 
 def get_top_similar(query, n=5):
+    query = remove_stopwords(word_tokenize(query))
     query_encoded = model.encode(query)
 
     cases_dictionary = dict(zip(cases_text, cases_embeddings))
