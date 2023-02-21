@@ -1,0 +1,12 @@
+version: '3.1'
+
+services:
+  disinfo_api: 
+    build: 
+      context: .
+      dockerfile: ./src/model_api/Dockerfile
+      network: host
+    ports:
+      - 80:80
+
+
