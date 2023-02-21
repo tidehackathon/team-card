@@ -1,0 +1,223 @@
+/* General styles */
+body {
+  background-color: #1F2124;
+  color: #FFF;
+  font-family: Arial, sans-serif;
+}
+
+h2 {
+  color: #FFF;
+  text-align: center;
+}
+
+p {
+  color: #C2C2C2;
+}
+
+.container {
+  border-radius: 4px;
+  box-shadow: 0 2px 4px #000;
+  padding: 20px;
+  width: 30%;
+  margin-bottom: 20px;
+  background-color: #2B2E33;
+}
+
+button {
+  background-color: #ccc;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #424242;
+}
+
+
+/* Form controls */
+input[type="submit"] {
+  border: none;
+  border-radius: 4px;
+  background-color: #5E8BE5;
+  color: #FFF;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+input[type="text"],
+input[type="email"],
+select {
+  border: none;
+  border-radius: 4px;
+  background-color: #3E4145;
+  color: #FFF;
+  padding: 8px 12px;
+}
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"><polygon points="0,0 10,0 5,10"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+table th {
+  text-align: left;
+  padding: 8px;
+  background-color: #3E4145;
+}
+
+table td {
+  text-align: left;
+  padding: 8px;
+  border-bottom: 1px solid #4E5257;
+}
+
+/* Navigation menu */
+nav {
+  background-color: #2B2E33;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+nav li {
+  display: inline-block;
+  margin-right: 20px;
+}
+
+nav a {
+  display: block;
+  color: #FFF;
+  text-decoration: none;
+  padding: 8px;
+}
+
+nav a:hover {
+  background-color: #5E8BE5;
+  color: #FFF;
+}
+.Select-placeholder{
+  color: #1F2124;
+}
+
+.Select-control{
+  background-color: #ccc;
+}
+.Select-menu-outer{
+  background-color: #ccc;
+}
+
+.is-focused:not(.is-open)>.Select-control{
+  border-color: #1F2124;
+}
+
+.is-open>.Select-control{
+  background: #ccc;
+}
+
+/*.Select-menu-outer{
+  background: black;
+}*/
+
+
+.dropdown {
+  font-size: 16px;
+  color: #333; /* option name color */
+  padding: 0 40px 8px 40px;
+}
+/*
+.dropdown:label {
+  background-color: orange;
+}*/
+
+.sidebar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 20%;
+    background-color: #2B2E33;
+}
+
+.content{
+    margin-left: 22%;   /* 20% sidebar */
+    margin-right: 2%;
+    top: 0;
+
+}
+
+.card-style{
+    display: inline-block;
+    width: 25%;
+    padding: 10px;
+    margin: 10px;
+}
+
+.card-container{
+    margin-top: 2%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+/*
+.tab--selected.jsx-1653633250{
+    background-color: #2B2E33 !important;
+    color: #C2C2C2 !important;
+    border-top: none !important;
+    font-weight: bold !important;
+}
+.tab.jsx-1653633250{
+    border: none !important;
+}*/
+
+.tab{
+    border: none !important;
+    cursor: pointer;
+    background-color: #2B2E33 !important;
+    color: #C2C2C2 !important;
+    width: calc(100% / 4) !important;
+}
+
+.tab-selected{
+    background-color: #0E1012 !important;
+    color: #C2C2C2 !important;
+    border-top: none !important;
+    font-weight: bold !important;
+}
+
+.left-circle{
+    width: 50px !important;
+    background-color: #f00;
+    border-radius: 50px 0 0 50px;
+}
+
+.right-circle{
+    width: 50px !important;
+    background-color: #f00;
+    border-radius: 0 50px 50px 0;
+}
+
+.rc-slider-track{
+    background-color: #0E1012;
+}
+
+.rc-slider-handle{
+    border: solid 2px #2B2E33;
+}
