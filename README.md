@@ -2,7 +2,8 @@
 
 ## Prerequisites
 - GNU Make
-- Docker (tbd)
+- Docker
+- docker-compose
 
 #### Create and activate virtual environment
 
@@ -26,7 +27,8 @@ This request requires a json input file. The example json:
 
 The expected result is a list with recommended products and their scores:
 ```json
-{"result": false}
+{"result": false,
+ "explanation": [["Anaconda",0.29], ["following",0.16]]}
 ```
 
 

@@ -14,5 +14,6 @@ async def root():
 async def check_fraud(items: Article):
     data = json.loads(items.json())
     prob = predictor(data['article_text'])
-    return {"result": bool(not(np.argmax(prob)))}
+    return {"result": bool(not(np.argmax(prob))),
+            "explanation": get_explanation(data['article_text'])}
 
