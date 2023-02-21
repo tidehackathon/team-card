@@ -17,5 +17,6 @@ def predictor(texts):
 def get_explanation(text):
     explainer = LimeTextExplainer(class_names=class_names)
     exp = explainer.explain_instance(text, predictor, num_features=10, num_samples=20)
-    fig = exp.as_pyplot_figure()
-    plt.show()
+    return exp.as_list()
+    #fig = exp.as_pyplot_figure()
+    #plt.show()
