@@ -214,6 +214,10 @@ def bar_chart_tab(n_clicks, url):
                 responses_df = responses_df.append(dict_data['explanation'])
                 # print(dict_data['explanation'])
     image = px.bar(responses_df, x=0, y=1)
+    # create a scatter plot using Plotly Express
+    if n_clicks > 0:
+        return dcc.Graph(id='bar-chart', figure=image)
+
 
 
 @app.callback(
