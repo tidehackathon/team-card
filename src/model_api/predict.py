@@ -3,7 +3,7 @@ import torch.nn.functional as F
 from lime.lime_text import LimeTextExplainer
 import numpy as np
 
-class_names = ["fake", "real"]
+class_names = ["real", "fake"]
 model = AutoModelForSequenceClassification.from_pretrained("ghanashyamvtatti/roberta-fake-news")
 tokenizer = AutoTokenizer.from_pretrained("ghanashyamvtatti/roberta-fake-news")
 
@@ -17,7 +17,7 @@ tokenizer = AutoTokenizer.from_pretrained("ghanashyamvtatti/roberta-fake-news")
 def predictor(texts):
     outputs = model(**tokenizer(texts, return_tensors="pt", padding=True))
     tensor_logits = outputs[0]
-    probas = F.softmax(tensor_logits).detach().numpy()
+    probas = F.softmax(tensor_logits, -1).detach().numpy()
     return probas
 
 
