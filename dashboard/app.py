@@ -66,11 +66,13 @@ def url_to_article(url):
 
 article_link = html.Div(
     [
-        html.P("Article URL link"),
-        dcc.Input(id='url-input', type='text', placeholder='Article URL...'),
+        dcc.Input(id='url-input', type='text', placeholder='Article URL link...',
+                  style={"width": "35%", "padding": "15px", "font-size": "16px"}),
         html.Br(),
-        html.Button("Analyse", id='url-submit-button', style={"margin-top": "15px"}, n_clicks=0),
-    ], style={"text-align": "center"}
+        html.Button("Analyse", id='url-submit-button',
+                    style={"margin-top": "20px", "font-size": "14px", "padding-left": "10%", "padding-right": "10%",},
+                    n_clicks=0),
+    ], style={"text-align": "center", "margin-top": "20px"}
 )
 
 message_form = html.Div(
@@ -103,7 +105,7 @@ content = html.Div([
 
 
 @app.callback(Output('tabs-content', 'children'),
-              Input('tabs', 'value'),)
+              Input('tabs', 'value'), )
 def render_content(tab):
     if tab == 'tab-1':
         return html.Div([
@@ -138,59 +140,71 @@ def render_content(tab):
 
 @app.callback(
     Output('bar-chart-container', 'children'),
-    #Output('url-input', 'value'),
+    # Output('url-input', 'value'),
     Input('url-submit-button', 'n_clicks'),
     State('url-input', 'value'),
 )
 def bar_chart_tab(n_clicks, url):
     article = url_to_article(url)
-    # print(article.text)
+
     # Lower case article text
     lower_case = article.text.lower()
+    # Remove UTF characters
+    no_utf = re.sub(r'[^a-zA-Z0-9.,:/]', ' ', lower_case)
+    response = model_request(no_utf[:2000])
+    # Response to dict
+    dict_data = json.loads(response.text)
 
-    # Request to models
-    responses_df = pd.DataFrame()
-    # Split the paragraphs
-    for paragraph in lower_case.split("\n"):
-        # Remove non text-digit characters
-        no_utf = re.sub(r'[^a-zA-Z0-9.,:/]', ' ', paragraph)
-        if len(no_utf) > 5:
-            response = model_request(no_utf)
-            # Response to dict
-            dict_data = json.loads(response.text)
-            # Check if it's disinformation
-            if dict_data['result']:
-                responses_df = responses_df.append(dict_data['explanation'])
-                # print(dict_data['explanation'])
-    image = px.bar(responses_df, x=0, y=1)
+    chart_data = pd.DataFrame(dict_data['explanation'])
+    chart = px.bar(chart_data, x=0, y=1)
     # create a scatter plot using Plotly Express
     if n_clicks > 0:
-        return dcc.Graph(id='bar-chart', figure=image)
+        return dcc.Graph(id='bar-chart', figure=chart)
 
+
+def visualise_match(case_score, case_title, case_content):
+    return html.Div([
+        html.Div(
+            [
+                html.H2(case_title + "."),
+                html.Div([
+                    html.H2("Score: ", style={"margin-left": "50px"}),
+                    html.H2(case_score, style={"color": "#ff5252", "margin-left": "10px"})
+                ], style={'display': 'flex', 'justify-content': 'space-around', "margin": "0"}),
+
+            ], style={'display': 'flex', 'justify-content': 'left'}
+        ),
+        html.P(case_content),
+    ], style={"margin-bottom": "50px"})
 
 
 @app.callback(
     Output('case-matching-container', 'children'),
     Input('message-submit-button', 'n_clicks'),
+    Input('slider', 'value'),
     State('message-input', 'value'),
 )
-def case_matching_tab(n_clicks, message):
+def case_matching_tab(n_clicks, slider, message):
     # Lower case message
     lower_case = message.lower()
-    # Remove UTF symbols
+    # # Remove UTF symbols
     no_utf = re.sub(r'[^a-zA-Z0-9.,:/]', ' ', lower_case)
-    # Case model matching request
+
+    # # Case model matching request
     response = case_matching(no_utf)
-    print(response.text)
-    return html.Div(
-        [
-            html.H2("Title"),
-            html.P("Paragraph")
-        ]
-    )
+
+    test_response = "[{\"score\": 0.9,\"title\": \"The title of the disinformation case\",\"content\": \"The description of the disinformation case\"}," \
+                    "{\"score\": 0.5,\"title\": \"The title of test\",\"content\": \"The description of the test case\"}]"
+    array = json.loads(response.text)  # response.text
+
+    div_children = [html.Div(id=f"div-{obj['score']}",
+                             children=visualise_match(obj['score'], obj['title'], obj['content'])) for obj in array]
+
+    return div_children
 
 
 app.layout = html.Div([content])
 
 if __name__ == '__main__':
     app.run_server(host='0.0.0.0', port=80, debug=True)
+
