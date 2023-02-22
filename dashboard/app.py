@@ -96,7 +96,6 @@ content = html.Div([
         dcc.Tab(label='Tab 1', value='tab-1', className="tab", selected_className="tab-selected"),
         dcc.Tab(label='Tab 2', value='tab-2', className="tab", selected_className="tab-selected"),
         dcc.Tab(label='Tab 3', value='tab-3', className="tab", selected_className="tab-selected"),
-        dcc.Tab(label='Tab 4', value='tab-4', className="tab", selected_className="tab-selected"),
         html.Div(className="right-circle"),
     ]),
     html.Div(id='tabs-content')
@@ -134,10 +133,7 @@ def render_content(tab):
             ], style={'justify-content': 'center'})
 
     ], style={'height': '100%', 'width:': '100%'})
-    elif tab == 'tab-4':
-        return html.Div([
-            html.H3('Tab content 4')
-        ])
+
 
 
 @app.callback(
