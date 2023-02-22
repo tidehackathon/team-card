@@ -1,4 +1,5 @@
 import json
+import re
 
 from dash import Dash, html, dcc, Input, Output, State
 import plotly.graph_objs as go
@@ -174,18 +175,32 @@ def render_content(tab):
 
 @app.callback(
     Output('output-container', 'children'),
-    # Output('url-input', 'value'),
+    #Output('url-input', 'value'),
     Input('submit-button', 'n_clicks'),
     State('url-input', 'value'),
 )
 def display_output(n_clicks, url):
-    # article = url_to_article(url)
-    res = model_request("this is a test can you make something out of it")
-    dict_data = json.loads(res.text.lower())
-    # print(dict_data['explanation'])
-    df = pd.DataFrame(dict_data['explanation'])
-    # print(df)
-    image = px.bar(df, x=0, y=1)
+    article = url_to_article(url)
+    # print(article.text)
+    # Lower case article text
+    lower_case = article.text.lower()
+
+    # Request to models
+    responses_df = pd.DataFrame()
+    # Split the paragraphs
+    for paragraph in lower_case.split("\n"):
+        # Remove non text-digit characters
+        no_utf = re.sub(r'[^a-zA-Z0-9.,:/]', ' ', paragraph)
+        if len(no_utf) > 5:
+            response = model_request(no_utf)
+            # Response to dict
+            dict_data = json.loads(response.text)
+            # Check if it's disinformation
+            if dict_data['result']:
+                responses_df = responses_df.append(dict_data['explanation'])
+                #print(dict_data['explanation'])
+
+    image = px.bar(responses_df, x=0, y=1)
     # create a scatter plot using Plotly Express
     if n_clicks > 0:
         return dcc.Graph(id='bar-chart', figure=image)
