@@ -30,7 +30,7 @@ def get_top_n(diction, n=10):
     return dict(topitems)
 
 def get_top_similar(query, thresh=0.88):
-    query = remove_stopwords(word_tokenize(query))
+    query = remove_stopwords(word_tokenize(query)).lower()
     query_encoded = model.encode(query)
 
     cases_dictionary = dict(zip(cases_text, cases_embeddings))

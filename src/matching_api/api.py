@@ -12,5 +12,6 @@ async def root():
 @app.post("/match_fake/")
 async def check_fraud(items: Message):
     data = json.loads(items.json())
-    similar_stories = get_top_similar(data['message_text'], thresh=0.88)
+    threshold = data['threshold']
+    similar_stories = get_top_similar(data['message_text'], thresh=threshold)
     return similar_stories

@@ -1,7 +1,8 @@
 import requests
 
 dl_test_dict = {"article_text": "To install PyTorch via Anaconda, use the following conda command"}
-matching_test_dict = {"message_text": "i think some are actual russian bots to antagonize other nations citizens against ukraine to support russia"}
+matching_test_dict = {"message_text": "i think some are actual russian bots to antagonize other nations citizens against ukraine to support russia",
+                      "threshold": 0.88}
 
 def test_dl_info():
     response = requests.get("http://127.0.0.1:11111/")
