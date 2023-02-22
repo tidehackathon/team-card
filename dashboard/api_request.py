@@ -14,6 +14,5 @@ def model_request(article_text):
 
 def case_matching(message_text):
     text_dict = {"message_text": message_text}
-    print(text_dict)
-    response = requests.post('http://localhost:22222/match_fake/', json=text_dict)
+    response = requests.post('http://match_api:80/match_fake/', json=text_dict)
     return response
