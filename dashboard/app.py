@@ -1,18 +1,12 @@
 import json
 import re
-
 from dash import Dash, html, dcc, Input, Output, State
-import plotly.graph_objs as go
 import plotly.io as pio
 import plotly.express as px
-import pandas as pd
 import newspaper
-
 from api_request import *
-
 import pandas as pd
 import plotly.graph_objects as go
-import numpy as np
 
 pio.templates.default = "plotly_dark"  # set the default theme to dark
 # sample data
@@ -233,7 +227,12 @@ def case_matching_tab(n_clicks, message):
     # Case model matching request
     response = case_matching(no_utf)
     print(response.text)
-    return html.H2("Test")
+    return html.Div(
+        [
+            html.H2("Title"),
+            html.P("Paragraph")
+        ]
+    )
 
 
 app.layout = html.Div([content])
