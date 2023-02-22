@@ -15,7 +15,9 @@ services:
       network: host
     ports:
       - 11111:80
-      
+    volumes:
+      - ./cache/disinfo_api:/root/.cache/huggingface/
+
   match_api: 
     build: 
       context: .
@@ -23,4 +25,6 @@ services:
       network: host
     ports:
       - 22222:80
+    volumes:
+      - ./cache/match_api:/root/.cache/torch/
 
