@@ -9,85 +9,29 @@ import pandas as pd
 import plotly.graph_objects as go
 
 pio.templates.default = "plotly_dark"  # set the default theme to dark
-# sample data
-x = ['A', 'B', 'C', 'D', 'E']
-y = [10, 20, 30, 25, 15]
-
-fig = go.Figure(data=[go.Bar(x=x, y=y)])
-fig.update_layout(
-    title="Sample Pie Chart",
-    font=dict(
-        family="Arial",
-        size=12,
-        color="white"
-    ),
-    plot_bgcolor="#1f2630",
-    paper_bgcolor="#1f2630"
-)
-
-data = {
-    'x': ['Apples', 'Oranges', 'Bananas'],
-    'y': [3, 2, 4]
-}
 
 # Define the layout for the bar chart
-layout = {
-    'title': 'Fruit Sales',
+heatmap_layout = {
+    'title': 'Disinformation detection model confusion matrix',
     'paper_bgcolor': '#2B2E33',
     'plot_bgcolor': '#2B2E33',
     'font': {'color': 'white'},
-    'xaxis': {'title': 'Fruit'},
-    'yaxis': {'title': 'Number of Sales'}
+    #'xaxis': {'title': 'Fruit'},
+    #'yaxis': {'title': 'Number of Sales'}
 }
 
-# Define the figure for the bar chart
-figure = {
-    'data': [{'type': 'bar', 'marker': {'color': 'Orange'}, 'x': data['x'], 'y': data['y']}],
-    'layout': layout
-}
+fig_heatmap = go.Figure(data=go.Heatmap(
+                    z=[[20, 88], [35, 362]],
+                    text=[['20', '88'], ['35', '362']],
+                    texttemplate="%{text}",
+                    textfont={"size":18},
+                    colorscale='rdbu'),
+                    layout=heatmap_layout)
 
 darkTheme = ['styles.css']
 
 app = Dash(external_stylesheets=darkTheme, meta_tags=[{"name": "viewport", "content": "width=device-width"}])
 app.title = "This is title"
-
-parameters = html.Div([
-    html.P("Dropdown"),
-    dcc.Dropdown(options=[
-        {'label': 'Vilnius', 'value': 'VLN'},
-        {'label': 'Kaunas', 'value': 'KAU'},
-        {'label': 'Klaipeda', 'value': 'KLP'},
-    ], placeholder="select city", id='demo-dropdown', className="dropdown"),
-    html.P("Range Slider"),
-    dcc.RangeSlider(
-        id='range_slider',
-        min=0,
-        max=20,
-        step=5,
-        value=[5, 15]
-    ),
-    html.P("Check Box"),
-    dcc.Checklist(
-        id='check_list',
-        options=[{
-            'label': 'Value One',
-            'value': 'value1'
-        },
-            {
-                'label': 'Value Two',
-                'value': 'value2'
-            },
-            {
-                'label': 'Value Three',
-                'value': 'value3'
-            }
-        ],
-        value=['value1', 'value2'],
-        inline=False,
-        style={"display": "flex", "flex-direction": "column"},
-    ),
-    html.Button("Apply", style={"margin-top": "30px"}),
-], style={"text-align": "center"})
 
 
 def url_to_article(url):
@@ -126,7 +70,7 @@ sidebar = html.Div([
 ], className="sidebar")
 
 content = html.Div([
-    html.H2("DISinformation Analyser Dashboard"),
+    html.H2("infoDesic dashboard"),
     dcc.Tabs(id='tabs', value='tab-1', children=[
         html.Div(className="left-circle"),
         dcc.Tab(label='Tab 1', value='tab-1', className="tab", selected_className="tab-selected"),
@@ -156,22 +100,8 @@ def render_content(tab):
         return html.Div([
         html.Div([
             html.Div([
-                html.Div([
-                    html.P("This is container with elements"),
-                ], className='container card-style', ),
-                html.Div([
-                    html.P("This is container with elements"),
-                ], className='container card-style', ),
-                html.Div([
-                    html.P("This is container with elements"),
-                ], className='container card-style', ),
-            ], className="card-container"),
-            dcc.Graph(
-                id='bar-chart',
-                figure=figure,
-                style={"margin-top": "20px"}
-            ),
-
+                dcc.Graph(id='heatmap_plot', figure=fig_heatmap, style={"margin-top": "20px"})
+            ])
         ], style={'display': 'inline-block', 'width': '100%', 'height': '100%', 'textAlign': 'center'}),
 
     ], style={'height': '100%', 'width:': '100%'})
