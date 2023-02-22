@@ -3,6 +3,7 @@ import re
 from dash import Dash, html, dcc, Input, Output, State
 import plotly.io as pio
 import plotly.express as px
+import numpy as np
 import newspaper
 from api_request import *
 import pandas as pd
@@ -10,14 +11,19 @@ import plotly.graph_objects as go
 
 pio.templates.default = "plotly_dark"  # set the default theme to dark
 
+with open('results/confusion_matrix.npy', 'rb') as f:
+    confusion_matrix = np.load(f)
+
+with open('results/metrics.json', 'r') as f:
+    metrics = json.load(f)
+
+
 # Define the layout for the bar chart
 heatmap_layout = {
     'title': 'Disinformation detection model confusion matrix',
     'paper_bgcolor': '#2B2E33',
     'plot_bgcolor': '#2B2E33',
     'font': {'color': 'white'},
-    #'xaxis': {'title': 'Fruit'},
-    #'yaxis': {'title': 'Number of Sales'}
 }
 
 bar_layout = {
@@ -25,21 +31,19 @@ bar_layout = {
     'paper_bgcolor': '#2B2E33',
     'plot_bgcolor': '#2B2E33',
     'font': {'color': 'white'},
-    #'xaxis': {'title': 'Fruit'},
-    #'yaxis': {'title': 'Number of Cases'}
 }
-
 fig_heatmap = go.Figure(data=go.Heatmap(
-                    z=[[20, 88], [35, 362]],
-                    text=[['20', '88'], ['35', '362']],
+                    z=confusion_matrix[[1,0]],
+                    text=[[confusion_matrix[1][0], confusion_matrix[1][1]], 
+                          [confusion_matrix[0][0], confusion_matrix[0][1]]],
                     texttemplate="%{text}",
                     textfont={"size":18},
                     colorscale='rdbu'),
                     layout=heatmap_layout)
 
 fig_bar = go.Figure(go.Bar(
-    x=['Neutral', "Fakenews"],
-    y=[180, 58],
+    x=['Fakenews', "Neutral"],
+    y=np.sum(confusion_matrix, axis=1),
     name='Primary Product',
     marker_color='indianred'
 ), layout=bar_layout)
@@ -120,12 +124,12 @@ def render_content(tab):
         ], style={'display': 'flex', 'width': '100%', 'height': '100%', 'textAlign': 'center', 'justify-content': 'space-between'}),
          html.Div([
             html.Div([
-                html.H2("Model Accuracy: " + "0.98", style={"margin-left": "20px"}),
-                html.H2("Model Precision: " + "0.95", style={"margin-left": "20px"})
+                html.H2("Model Accuracy: " + str(round(metrics.get('Accuracy'), 2)), style={"margin-left": "20px"}),
+                html.H2("Model Precision: " + str(round(metrics.get('Precision'), 2)), style={"margin-left": "20px"})
             ], style={'display': 'flex', 'justify-content': 'center'}),
             html.Div([
-                html.H2("Model Recall: " + "0.93", style={"margin-left": "20px"}),
-                html.H2("Model F1-Score: " + "0.96", style={"margin-left": "20px"})
+                html.H2("Model Recall: " + str(round(metrics.get('Recall'), 2)), style={"margin-left": "20px"}),
+                html.H2("Model F1-Score: " + str(round(metrics.get('F1-score'), 2)), style={"margin-left": "20px"})
             ], style={'display': 'flex', 'justify-content': 'center'})
             ], style={'justify-content': 'center'})
 
