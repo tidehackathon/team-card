@@ -1,9 +1,12 @@
+import json
+import re
 from dash import Dash, html, dcc, Input, Output, State
-import plotly.graph_objs as go
 import plotly.io as pio
+import plotly.express as px
 import newspaper
-
 from api_request import *
+import pandas as pd
+import plotly.graph_objects as go
 
 pio.templates.default = "plotly_dark"  # set the default theme to dark
 # sample data
@@ -57,32 +60,32 @@ parameters = html.Div([
     ], placeholder="select city", id='demo-dropdown', className="dropdown"),
     html.P("Range Slider"),
     dcc.RangeSlider(
-            id='range_slider',
-            min=0,
-            max=20,
-            step=5,
-            value=[5, 15]
-        ),
+        id='range_slider',
+        min=0,
+        max=20,
+        step=5,
+        value=[5, 15]
+    ),
     html.P("Check Box"),
     dcc.Checklist(
-            id='check_list',
-            options=[{
-                'label': 'Value One',
-                'value': 'value1'
+        id='check_list',
+        options=[{
+            'label': 'Value One',
+            'value': 'value1'
+        },
+            {
+                'label': 'Value Two',
+                'value': 'value2'
             },
-                {
-                    'label': 'Value Two',
-                    'value': 'value2'
-                },
-                {
-                    'label': 'Value Three',
-                    'value': 'value3'
-                }
-            ],
-            value=['value1', 'value2'],
-            inline=False,
-            style={"display": "flex", "flex-direction": "column"},
-        ),
+            {
+                'label': 'Value Three',
+                'value': 'value3'
+            }
+        ],
+        value=['value1', 'value2'],
+        inline=False,
+        style={"display": "flex", "flex-direction": "column"},
+    ),
     html.Button("Apply", style={"margin-top": "30px"}),
 ], style={"text-align": "center"})
 
@@ -102,14 +105,24 @@ article_link = html.Div(
         html.P("Article URL link"),
         dcc.Input(id='url-input', type='text', placeholder='Article URL...'),
         html.Br(),
-        html.Button("Apply", id='submit-button', style={"margin-top": "15px"}, n_clicks=0),
+        html.Button("Analyse", id='url-submit-button', style={"margin-top": "15px"}, n_clicks=0),
     ], style={"text-align": "center"}
+)
+
+message_form = html.Div(
+    [
+        html.P("Message"),
+        dcc.Input(id='message-input', type='text', placeholder='Message...'),
+        html.Br(),
+        html.Button("Match", id='message-submit-button', style={"margin-top": "15px"}, n_clicks=0),
+    ], style={"text-align": "center", "margin-top": "20px"}
 )
 
 sidebar = html.Div([
     html.Div(children=[html.H2("Parameters")]),
     html.Hr(),
-    article_link
+    article_link,
+    message_form
 ], className="sidebar")
 
 content = html.Div([
@@ -127,37 +140,41 @@ content = html.Div([
 
 
 @app.callback(Output('tabs-content', 'children'),
-              Input('tabs', 'value'))
+              Input('tabs', 'value'),)
 def render_content(tab):
     if tab == 'tab-1':
         return html.Div([
-            html.Div([
-                html.Div([
-                    html.Div([
-                        html.P("This is container with elements"),
-                    ], className='container card-style', ),
-                    html.Div([
-                        html.P("This is container with elements"),
-                    ], className='container card-style', ),
-                    html.Div([
-                        html.P("This is container with elements"),
-                    ], className='container card-style', ),
-                ], className="card-container"),
-                dcc.Graph(
-                    id='bar-chart',
-                    figure=figure,
-                    style={"margin-top": "20px"}
-                ),
-
-            ], style={'display': 'inline-block', 'width': '100%', 'height': '100%', 'textAlign': 'center'}),
-
-        ], style={'height': '100%', 'width:': '100%'});
+            article_link,
+            html.Div(id='bar-chart-container')
+        ])
     elif tab == 'tab-2':
-        return html.Div(id='output-container')
+        return html.Div([
+            message_form,
+            html.Div(id='case-matching-container')
+        ])
     elif tab == 'tab-3':
         return html.Div([
-            html.H3('Tab content 3')
-        ])
+        html.Div([
+            html.Div([
+                html.Div([
+                    html.P("This is container with elements"),
+                ], className='container card-style', ),
+                html.Div([
+                    html.P("This is container with elements"),
+                ], className='container card-style', ),
+                html.Div([
+                    html.P("This is container with elements"),
+                ], className='container card-style', ),
+            ], className="card-container"),
+            dcc.Graph(
+                id='bar-chart',
+                figure=figure,
+                style={"margin-top": "20px"}
+            ),
+
+        ], style={'display': 'inline-block', 'width': '100%', 'height': '100%', 'textAlign': 'center'}),
+
+    ], style={'height': '100%', 'width:': '100%'})
     elif tab == 'tab-4':
         return html.Div([
             html.H3('Tab content 4')
@@ -165,19 +182,60 @@ def render_content(tab):
 
 
 @app.callback(
-    Output('output-container', 'children'),
-    Output('url-input', 'value'),
-    Input('submit-button', 'n_clicks'),
+    Output('bar-chart-container', 'children'),
+    #Output('url-input', 'value'),
+    Input('url-submit-button', 'n_clicks'),
     State('url-input', 'value'),
 )
-def display_output(n_clicks, url):
+def bar_chart_tab(n_clicks, url):
     article = url_to_article(url)
-    print(model_request(article.title))
+    # print(article.text)
+    # Lower case article text
+    lower_case = article.text.lower()
+
+    # Request to models
+    responses_df = pd.DataFrame()
+    # Split the paragraphs
+    for paragraph in lower_case.split("\n"):
+        # Remove non text-digit characters
+        no_utf = re.sub(r'[^a-zA-Z0-9.,:/]', ' ', paragraph)
+        if len(no_utf) > 5:
+            response = model_request(no_utf)
+            # Response to dict
+            dict_data = json.loads(response.text)
+            # Check if it's disinformation
+            if dict_data['result']:
+                responses_df = responses_df.append(dict_data['explanation'])
+                # print(dict_data['explanation'])
+    image = px.bar(responses_df, x=0, y=1)
+    # create a scatter plot using Plotly Express
     if n_clicks > 0:
-        return f'Your provided article title is: "{article.title}"\n\n\n\n\nand it\'s content: \n"{article.text}".', ''
+        return dcc.Graph(id='bar-chart', figure=image)
 
 
-app.layout = html.Div([sidebar, content])
+
+@app.callback(
+    Output('case-matching-container', 'children'),
+    Input('message-submit-button', 'n_clicks'),
+    State('message-input', 'value'),
+)
+def case_matching_tab(n_clicks, message):
+    # Lower case message
+    lower_case = message.lower()
+    # Remove UTF symbols
+    no_utf = re.sub(r'[^a-zA-Z0-9.,:/]', ' ', lower_case)
+    # Case model matching request
+    response = case_matching(no_utf)
+    print(response.text)
+    return html.Div(
+        [
+            html.H2("Title"),
+            html.P("Paragraph")
+        ]
+    )
+
+
+app.layout = html.Div([content])
 
 if __name__ == '__main__':
-    app.run_server(host='0.0.0.0', port=80, debug=False)
+    app.run_server(host='0.0.0.0', port=80, debug=True)
