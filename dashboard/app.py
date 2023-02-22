@@ -3,6 +3,7 @@ import plotly.graph_objs as go
 import plotly.io as pio
 import newspaper
 
+from api_request import *
 
 pio.templates.default = "plotly_dark"  # set the default theme to dark
 # sample data
@@ -171,6 +172,7 @@ def render_content(tab):
 )
 def display_output(n_clicks, url):
     article = url_to_article(url)
+    print(model_request(article.title))
     if n_clicks > 0:
         return f'Your provided article title is: "{article.title}"\n\n\n\n\nand it\'s content: \n"{article.text}".', ''
 

@@ -1,6 +1,5 @@
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch.nn.functional as F
-import matplotlib.pyplot as plt
 from lime.lime_text import LimeTextExplainer
 
 class_names = ["fake", "real"]
@@ -17,5 +16,5 @@ def predictor(texts):
 def get_explanation(text):
     explainer = LimeTextExplainer(class_names=class_names)
     exp = explainer.explain_instance(text, predictor, num_features=10, num_samples=20)
-    fig = exp.as_pyplot_figure()
-    plt.show()
+    return exp.as_list()
+    
