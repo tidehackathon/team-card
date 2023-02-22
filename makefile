@@ -9,3 +9,6 @@ create-virtualenv:
 run-tests:
 	${PYTHON} -m pytest 
 
+score-dl-model:
+	${PYTHON} -i -m src.scoring_dl_models.score
+
