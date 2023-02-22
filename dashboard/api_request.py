@@ -8,11 +8,12 @@ def api_request_info():
 
 def model_request(article_text):
     text_dict = {"article_text": article_text}
-    response = requests.post('http://localhost:11111/check_fake/', json=text_dict)
+    response = requests.post('http://disinfo_api:80/check_fake/', json=text_dict)
     return response
 
 
 def case_matching(message_text):
     text_dict = {"message_text": message_text}
+    print(text_dict)
     response = requests.post('http://localhost:22222/match_fake/', json=text_dict)
     return response

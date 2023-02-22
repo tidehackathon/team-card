@@ -6,7 +6,7 @@ commits/
 resources
 
 # Virtual environments
-.venv
+.venv*
 .env
 
 # Python

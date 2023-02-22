@@ -15,4 +15,12 @@ services:
       network: host
     ports:
       - 11111:80
+      
+  match_api: 
+    build: 
+      context: .
+      dockerfile: ./src/matching_api/Dockerfile
+      network: host
+    ports:
+      - 22222:80
 
