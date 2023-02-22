@@ -1,4 +1,3 @@
-import pandas as pd
 import re
 import string
 
@@ -104,11 +103,3 @@ def remove_punct(text_string):
     text_string = text_string.replace("   ", " ")
     text_string = re.sub(r"(\w+)(\d{4})", r"\1 \2", text_string)
     return text_string
-
-
-def remove_double_spaces(df, column_name):
-    text = pd.DataFrame(columns=[column_name])
-    for i in range(len(df)):
-        s = " ".join(df[column_name][i].split())
-        text.loc[i] = [s]
-    return text
