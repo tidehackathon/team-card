@@ -20,6 +20,15 @@ heatmap_layout = {
     #'yaxis': {'title': 'Number of Sales'}
 }
 
+bar_layout = {
+    'title': 'Number of detected disinformation cases',
+    'paper_bgcolor': '#2B2E33',
+    'plot_bgcolor': '#2B2E33',
+    'font': {'color': 'white'},
+    #'xaxis': {'title': 'Fruit'},
+    #'yaxis': {'title': 'Number of Cases'}
+}
+
 fig_heatmap = go.Figure(data=go.Heatmap(
                     z=[[20, 88], [35, 362]],
                     text=[['20', '88'], ['35', '362']],
@@ -27,6 +36,13 @@ fig_heatmap = go.Figure(data=go.Heatmap(
                     textfont={"size":18},
                     colorscale='rdbu'),
                     layout=heatmap_layout)
+
+fig_bar = go.Figure(go.Bar(
+    x=['Neutral', "Fakenews"],
+    y=[180, 58],
+    name='Primary Product',
+    marker_color='indianred'
+), layout=bar_layout)
 
 darkTheme = ['styles.css']
 
@@ -58,7 +74,7 @@ message_form = html.Div(
         html.P("Message"),
         dcc.Input(id='message-input', type='text', placeholder='Message...'),
         html.Br(),
-        html.Button("Match", id='message-submit-button', style={"margin-top": "15px"}, n_clicks=0),
+        html.Button("Match", id='message-submit-button', style={"margin-top": "15px", "margin-right": "10px"}, n_clicks=0),
     ], style={"text-align": "center", "margin-top": "20px"}
 )
 
@@ -99,10 +115,19 @@ def render_content(tab):
     elif tab == 'tab-3':
         return html.Div([
         html.Div([
+                dcc.Graph(id='heatmap_plot', figure=fig_heatmap, style={"margin-top": "20px", 'float': 'right'}),
+                dcc.Graph(id='barchart', figure=fig_bar, style={"margin-top": "20px", 'width': '95%', 'float': 'right'})
+        ], style={'display': 'flex', 'width': '100%', 'height': '100%', 'textAlign': 'center', 'justify-content': 'space-between'}),
+         html.Div([
             html.Div([
-                dcc.Graph(id='heatmap_plot', figure=fig_heatmap, style={"margin-top": "20px"})
-            ])
-        ], style={'display': 'inline-block', 'width': '100%', 'height': '100%', 'textAlign': 'center'}),
+                html.H2("Model Accuracy: " + "0.98", style={"margin-left": "20px"}),
+                html.H2("Model Precision: " + "0.95", style={"margin-left": "20px"})
+            ], style={'display': 'flex', 'justify-content': 'center'}),
+            html.Div([
+                html.H2("Model Recall: " + "0.93", style={"margin-left": "20px"}),
+                html.H2("Model F1-Score: " + "0.96", style={"margin-left": "20px"})
+            ], style={'display': 'flex', 'justify-content': 'center'})
+            ], style={'justify-content': 'center'})
 
     ], style={'height': '100%', 'width:': '100%'})
     elif tab == 'tab-4':
