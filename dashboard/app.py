@@ -245,13 +245,8 @@ def visualise_match(case_score, case_title, case_content):
 )
 def case_matching_tab(n_clicks, slider, message):
     processed_message = preprocess_message(message)
-
-    # Case model matching request
     response = case_matching(processed_message, slider)
-
-    # test_response = "[{\"score\": 0.9,\"title\": \"The title of the disinformation case\",\"content\": \"The description of the disinformation case\"}," \
-    #                "{\"score\": 0.5,\"title\": \"The title of test\",\"content\": \"The description of the test case\"}]"
-    array = json.loads(response.text)  # should be response.text
+    array = json.loads(response.text)  
 
     div_children = [html.Div(id=f"div-{obj['score']}",
                              children=visualise_match(obj['score'], obj['title'], obj['content'])) for obj in array]
@@ -262,5 +257,5 @@ def case_matching_tab(n_clicks, slider, message):
 app.layout = html.Div([content])
 
 if __name__ == '__main__':
-    app.run_server(host='0.0.0.0', port=80, debug=True)
+    app.run_server(host='0.0.0.0', port=80, debug=False)
 
