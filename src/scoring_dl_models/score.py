@@ -21,13 +21,13 @@ def predictor(texts):
     probas = F.softmax(tensor_logits, -1).detach().numpy()
     return probas
 
-df = pd.read_csv('resources/articles-labeled.csv')
-df['articles'] = df["articles"].apply(preprocess_article)
-articles = list(df.articles)
+df = pd.read_csv('resources/articles-test.csv')
+df['article'] = df["article"].apply(preprocess_article)
+articles = list(df.article)
 labels = list(df.label)
 
 predicted = []
-for index, text in tqdm(enumerate(list(df.articles))):
+for index, text in tqdm(enumerate(list(df.article))):
     prob = np.argmax(predictor(text[:1000]))
     predicted.append(prob)
 
