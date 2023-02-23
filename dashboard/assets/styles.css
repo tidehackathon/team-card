@@ -192,7 +192,7 @@ nav a:hover {
     cursor: pointer;
     background-color: #2B2E33 !important;
     color: #C2C2C2 !important;
-    width: calc(100% / 4) !important;
+    width: calc(100% / 3) !important;
 }
 
 .tab-selected{

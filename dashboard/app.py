@@ -77,10 +77,24 @@ article_link = html.Div(
 
 message_form = html.Div(
     [
-        html.P("Message"),
-        dcc.Input(id='message-input', type='text', placeholder='Message...'),
-        html.Br(),
-        html.Button("Match", id='message-submit-button', style={"margin-top": "15px", "margin-right": "10px"}, n_clicks=0),
+        dcc.Input(id='message-input', type='text', placeholder='Message...',
+                  style={"width": "35%", "padding": "15px", "font-size": "16px"}),
+        html.Div(
+            [
+                dcc.Slider(
+                id='slider',
+                min=0.75,
+                max=0.98,
+                step=0.05,
+                value=0.75,
+        ),
+            ], style={"margin-left": "30%", "margin-right": "30%", "margin-top": "10px"}
+        ),
+        html.Button("Match", id='message-submit-button',
+                    style={"margin-top": "10px", "font-size": "14px", "padding-left": "10%", "padding-right": "10%"},
+                    n_clicks=0),
+        html.H2("Found cases", style={"text-align": "left", "margin-left": "18%", "margin-top": "20px"}),
+        html.Hr(style={"margin-right": "50%"}),
     ], style={"text-align": "center", "margin-top": "20px"}
 )
 
@@ -125,12 +139,16 @@ def render_content(tab):
         ], style={'display': 'flex', 'width': '100%', 'height': '100%', 'textAlign': 'center', 'justify-content': 'space-between'}),
          html.Div([
             html.Div([
-                html.H2("Model Accuracy: " + str(round(metrics.get('Accuracy'), 2)), style={"margin-left": "20px"}),
-                html.H2("Model Precision: " + str(round(metrics.get('Precision'), 2)), style={"margin-left": "20px"})
+                html.H2("Model Accuracy: "),
+                html.H2(str(round(metrics.get('Accuracy'), 2)), style={"color": "#ff5252", "margin-left": "10px"}),
+                html.H2("Model Precision: ", style={"margin-left": "20px"}),
+                html.H2(str(round(metrics.get('Precision'), 2)), style={"color": "#ff5252", "margin-left": "10px"}),
             ], style={'display': 'flex', 'justify-content': 'center'}),
             html.Div([
-                html.H2("Model Recall: " + str(round(metrics.get('Recall'), 2)), style={"margin-left": "20px"}),
-                html.H2("Model F1-Score: " + str(round(metrics.get('F1-score'), 2)), style={"margin-left": "20px"})
+                html.H2("Model Recall: "),
+                html.H2(str(round(metrics.get('Recall'), 2)), style={"color": "#ff5252", "margin-left": "10px"}),
+                html.H2("Model F1-Score: ", style={"margin-left": "20px"}),
+                html.H2(str(round(metrics.get('F1-score'), 2)), style={"color": "#ff5252", "margin-left": "10px"}),
             ], style={'display': 'flex', 'justify-content': 'center'})
             ], style={'justify-content': 'center'})
 
@@ -146,7 +164,6 @@ def render_content(tab):
 )
 def bar_chart_tab(n_clicks, url):
     article = url_to_article(url)
-
     # Lower case article text
     lower_case = article.text.lower()
     # Remove UTF characters
@@ -158,8 +175,7 @@ def bar_chart_tab(n_clicks, url):
     chart_data = pd.DataFrame(dict_data['explanation'])
     chart = px.bar(chart_data, x=0, y=1)
     # create a scatter plot using Plotly Express
-    if n_clicks > 0:
-        return dcc.Graph(id='bar-chart', figure=chart)
+    return dcc.Graph(id='bar-chart', figure=chart)
 
 
 def visualise_match(case_score, case_title, case_content):
@@ -185,17 +201,17 @@ def visualise_match(case_score, case_title, case_content):
     State('message-input', 'value'),
 )
 def case_matching_tab(n_clicks, slider, message):
-    # Lower case message
-    lower_case = message.lower()
-    # # Remove UTF symbols
-    no_utf = re.sub(r'[^a-zA-Z0-9.,:/]', ' ', lower_case)
-
+    # # Lower case message
+    # lower_case = message.lower()
+    # # # # Remove UTF symbols
+    # no_utf = re.sub(r'[^a-zA-Z0-9.,:/]', ' ', lower_case)
+    #
     # # Case model matching request
-    response = case_matching(no_utf)
+    # response = case_matching(no_utf)
 
     test_response = "[{\"score\": 0.9,\"title\": \"The title of the disinformation case\",\"content\": \"The description of the disinformation case\"}," \
                     "{\"score\": 0.5,\"title\": \"The title of test\",\"content\": \"The description of the test case\"}]"
-    array = json.loads(response.text)  # response.text
+    array = json.loads(test_response)  # should be response.text
 
     div_children = [html.Div(id=f"div-{obj['score']}",
                              children=visualise_match(obj['score'], obj['title'], obj['content'])) for obj in array]
