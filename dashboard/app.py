@@ -1,5 +1,4 @@
 import json
-import re
 from dash import Dash, html, dcc, Input, Output, State
 import plotly.io as pio
 import plotly.express as px
@@ -9,6 +8,8 @@ from api_request import *
 import pandas as pd
 import plotly.graph_objects as go
 
+from processing import preprocess_article, preprocess_message
+
 pio.templates.default = "plotly_dark"  # set the default theme to dark
 
 with open('results/confusion_matrix.npy', 'rb') as f:
@@ -16,7 +17,6 @@ with open('results/confusion_matrix.npy', 'rb') as f:
 
 with open('results/metrics.json', 'r') as f:
     metrics = json.load(f)
-
 
 # Define the layout for the bar chart
 heatmap_layout = {
@@ -51,7 +51,7 @@ fig_bar = go.Figure(go.Bar(
 darkTheme = ['styles.css']
 
 app = Dash(external_stylesheets=darkTheme, meta_tags=[{"name": "viewport", "content": "width=device-width"}])
-app.title = "This is title"
+app.title = "infoDesic"
 
 
 def url_to_article(url):
@@ -93,17 +93,10 @@ message_form = html.Div(
         html.Button("Match", id='message-submit-button',
                     style={"margin-top": "10px", "font-size": "14px", "padding-left": "10%", "padding-right": "10%"},
                     n_clicks=0),
-        html.H2("Found cases", style={"text-align": "left", "margin-left": "18%", "margin-top": "20px"}),
-        html.Hr(style={"margin-right": "50%"}),
+        html.H2("Found cases", style={"text-align": "left", "margin-left": "10%", "margin-top": "20px"}),
+        html.Hr(style={"margin-right": "365px"}),
     ], style={"text-align": "center", "margin-top": "20px"}
 )
-
-sidebar = html.Div([
-    html.Div(children=[html.H2("Parameters")]),
-    html.Hr(),
-    article_link,
-    message_form
-], className="sidebar")
 
 content = html.Div([
     html.H2("infoDesic dashboard"),
@@ -163,19 +156,69 @@ def render_content(tab):
     State('url-input', 'value'),
 )
 def bar_chart_tab(n_clicks, url):
+    # Get article
     article = url_to_article(url)
-    # Lower case article text
-    lower_case = article.text.lower()
-    # Remove UTF characters
-    no_utf = re.sub(r'[^a-zA-Z0-9.,:/]', ' ', lower_case)
-    response = model_request(no_utf[:500])
+
+    # Preprocess article text
+    processed_article = preprocess_article(article.text)
+
+    response = model_request(processed_article[:500])
+
     # Response to dict
     dict_data = json.loads(response.text)
 
+    # For testing
+    #dict_data = json.loads("{\"result\": true, \"scoere\": 0.5, \"explanation\": [[\"war\",1], [\"warr\",0],[\"warrr\",0.5],[\"warrrrr\",-0.5], [\"desinformation\",-1]]}")
+
     chart_data = pd.DataFrame(dict_data['explanation'])
-    chart = px.bar(chart_data, x=0, y=1)
+
+    # Make colors dependency on value
+    colors = pd.DataFrame(['colors'])
+    i = 0
+    for elem in chart_data.iloc[:, 1]:
+        if elem < 0:
+            colors.loc[i] = 'Fake'
+        else:
+            colors.loc[i] = 'Neutral'
+        i = i + 1
+    chart_data.append(colors)
+    concated_data = pd.concat([chart_data, colors], axis=1)
+
+    concated_data.columns = ['x', 'y', 'colors']
+
+    chart = px.bar(concated_data, x='x', y='y',
+                   color='colors',
+                   color_discrete_map={
+                       'Fake': '#ff5252',
+                       'Neutral': 'green'
+                   })
+    chart.update_layout(plot_bgcolor='#2B2E33')
+    chart.update_layout(paper_bgcolor='#2B2E33')
+    chart.update_xaxes(title='')
+    chart.update_yaxes(title='Fake               -               Real')
+    chart.update_layout(title="Words with most impact", title_x=0.5)
+    chart.update_layout(
+        legend=dict(
+            yanchor="middle",
+            y=0.5
+        )
+    )
+
+    # Result convert to text
+    res = "Fake" if dict_data['result'] else "Neutral"
+
     # create a scatter plot using Plotly Express
-    return dcc.Graph(id='bar-chart', figure=chart, style={"margin-top": "20px"})
+    return html.Div(
+        [
+            html.Div([
+                html.H2("Result: "),
+                html.H2(res, style={"color": "#ff5252", "margin-left": "10px"}),
+                html.H2("Score: ", style={"margin-left": "100px"}),
+                html.H2(dict_data['scoere'], style={"color": "#ff5252", "margin-left": "10px"}),
+            ], style={'display': 'flex', 'justify-content': 'center', "margin-top": "20px"}),
+            dcc.Graph(id='bar-chart', figure=chart, style={"margin-top": "20px"})
+        ]
+    )
 
 
 def visualise_match(case_score, case_title, case_content):
@@ -201,20 +244,14 @@ def visualise_match(case_score, case_title, case_content):
     State('message-input', 'value'),
 )
 def case_matching_tab(n_clicks, slider, message):
-    # Lower case message
-    lower_case = message.lower()
-    # # # Remove UTF symbols
-    no_utf = re.sub(r'[^a-zA-Z0-9.,:/]', ' ', lower_case)
-    print(slider)
-   
+    processed_message = preprocess_message(message)
+
     # Case model matching request
-    test_response = case_matching(no_utf, slider)
+    response = case_matching(processed_message, slider)
 
-
-    #test_response = "[{\"score\": 0.9,\"title\": \"The title of the disinformation case\",\"content\": \"The description of the disinformation case\"}," \
+    # test_response = "[{\"score\": 0.9,\"title\": \"The title of the disinformation case\",\"content\": \"The description of the disinformation case\"}," \
     #                "{\"score\": 0.5,\"title\": \"The title of test\",\"content\": \"The description of the test case\"}]"
-    array = json.loads(test_response.text)  # should be response.text
-    #array = json.loads(test_response)  # should be response.text
+    array = json.loads(response.text)  # should be response.text
 
     div_children = [html.Div(id=f"div-{obj['score']}",
                              children=visualise_match(obj['score'], obj['title'], obj['content'])) for obj in array]
