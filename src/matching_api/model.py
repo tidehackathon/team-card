@@ -46,7 +46,7 @@ def get_top_similar(query, thresh=0.88):
         if top_cases.get(key) < thresh:
             continue
         results.append({
-            "score": float(top_cases.get(key)),
+            "score": round(float(top_cases.get(key)),3),
             "title": [item.get("title") for item in cases_content if item.get("content") == key][0],
             "content": key
         })
