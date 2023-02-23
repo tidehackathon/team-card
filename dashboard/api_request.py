@@ -12,7 +12,7 @@ def model_request(article_text):
     return response
 
 
-def case_matching(message_text):
-    text_dict = {"message_text": message_text}
+def case_matching(message_text, thresh):
+    text_dict = {"message_text": message_text, "threshold": thresh}
     response = requests.post('http://match_api:80/match_fake/', json=text_dict)
     return response

@@ -168,14 +168,14 @@ def bar_chart_tab(n_clicks, url):
     lower_case = article.text.lower()
     # Remove UTF characters
     no_utf = re.sub(r'[^a-zA-Z0-9.,:/]', ' ', lower_case)
-    response = model_request(no_utf[:2000])
+    response = model_request(no_utf[:500])
     # Response to dict
     dict_data = json.loads(response.text)
 
     chart_data = pd.DataFrame(dict_data['explanation'])
     chart = px.bar(chart_data, x=0, y=1)
     # create a scatter plot using Plotly Express
-    return dcc.Graph(id='bar-chart', figure=chart)
+    return dcc.Graph(id='bar-chart', figure=chart, style={"margin-top": "20px"})
 
 
 def visualise_match(case_score, case_title, case_content):
@@ -201,17 +201,20 @@ def visualise_match(case_score, case_title, case_content):
     State('message-input', 'value'),
 )
 def case_matching_tab(n_clicks, slider, message):
-    # # Lower case message
-    # lower_case = message.lower()
-    # # # # Remove UTF symbols
-    # no_utf = re.sub(r'[^a-zA-Z0-9.,:/]', ' ', lower_case)
-    #
-    # # Case model matching request
-    # response = case_matching(no_utf)
+    # Lower case message
+    lower_case = message.lower()
+    # # # Remove UTF symbols
+    no_utf = re.sub(r'[^a-zA-Z0-9.,:/]', ' ', lower_case)
+    print(slider)
+   
+    # Case model matching request
+    test_response = case_matching(no_utf, slider)
 
-    test_response = "[{\"score\": 0.9,\"title\": \"The title of the disinformation case\",\"content\": \"The description of the disinformation case\"}," \
-                    "{\"score\": 0.5,\"title\": \"The title of test\",\"content\": \"The description of the test case\"}]"
-    array = json.loads(test_response)  # should be response.text
+
+    #test_response = "[{\"score\": 0.9,\"title\": \"The title of the disinformation case\",\"content\": \"The description of the disinformation case\"}," \
+    #                "{\"score\": 0.5,\"title\": \"The title of test\",\"content\": \"The description of the test case\"}]"
+    array = json.loads(test_response.text)  # should be response.text
+    #array = json.loads(test_response)  # should be response.text
 
     div_children = [html.Div(id=f"div-{obj['score']}",
                              children=visualise_match(obj['score'], obj['title'], obj['content'])) for obj in array]
