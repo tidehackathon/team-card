@@ -1,5 +1,6 @@
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch.nn.functional as F
+import torch
 from lime.lime_text import LimeTextExplainer
 import numpy as np
 
@@ -7,11 +8,8 @@ class_names = ["real", "fake"]
 model = AutoModelForSequenceClassification.from_pretrained("ghanashyamvtatti/roberta-fake-news")
 tokenizer = AutoTokenizer.from_pretrained("ghanashyamvtatti/roberta-fake-news")
 
-#tokenizer = AutoTokenizer.from_pretrained("mrm8488/bert-tiny-finetuned-fake-news-detection")
-#model = AutoModelForSequenceClassification.from_pretrained("mrm8488/bert-tiny-finetuned-fake-news-detection")
-
-#tokenizer = AutoTokenizer.from_pretrained("jy46604790/Fake-News-Bert-Detect")
-#model = AutoModelForSequenceClassification.from_pretrained("jy46604790/Fake-News-Bert-Detect")
+state_dict = torch.load("models/pytorch_model.bin", map_location=torch.device('cpu'))
+model.load_state_dict(state_dict)
 
 
 def predictor(texts):
