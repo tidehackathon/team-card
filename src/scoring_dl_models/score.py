@@ -6,6 +6,7 @@ import numpy as np
 import json
 from tqdm import tqdm
 from sklearn.metrics import confusion_matrix, classification_report, precision_score, accuracy_score, recall_score, f1_score
+from ..data_preprocessing.articles_prep import preprocess_article
 
 class_names = ["real", "fake"]
 model = AutoModelForSequenceClassification.from_pretrained("ghanashyamvtatti/roberta-fake-news")
@@ -21,6 +22,7 @@ def predictor(texts):
     return probas
 
 df = pd.read_csv('resources/articles-labeled.csv')
+df['articles'] = df["articles"].apply(preprocess_article)
 articles = list(df.articles)
 labels = list(df.label)
 
@@ -28,8 +30,6 @@ predicted = []
 for index, text in tqdm(enumerate(list(df.articles))):
     prob = np.argmax(predictor(text[:1000]))
     predicted.append(prob)
-
-#predicted = (~np.array(predicted).astype(bool)).astype(int)
 
 print(confusion_matrix(labels, predicted))
 print(classification_report(labels, predicted))
@@ -51,4 +51,3 @@ with open("dashboard/results/confusion_matrix.npy", "wb") as f:
 
 with open("dashboard/results/metrics.json", "w") as f:
     json.dump(acc_dict, f)
-

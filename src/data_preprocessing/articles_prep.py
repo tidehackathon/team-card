@@ -1,4 +1,4 @@
-from .preprocessing import remove_links, remove_punct, remove_html_tags
+from .preprocessing import remove_links, remove_punct, remove_html_tags, remove_html_tags_string
 
 
 def preprocess_articles(df, column_name):
@@ -25,3 +25,10 @@ def preprocess_articles(df, column_name):
         df.at[index, column_name] = sentence_without_punctuation
 
     return df
+
+def preprocess_article(article):
+    article = article.lower()
+    article = remove_links(article)
+    article = remove_html_tags_string(article)
+    article = remove_punct(article)
+    return article

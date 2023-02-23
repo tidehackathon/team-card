@@ -15,6 +15,11 @@ def remove_links(text_string):
 def remove_html_tags(text_string):
     text_string = text_string.apply(lambda x: re.sub("(<.*?>).*?(<.*?>)", "", x))
     return text_string
+    
+
+def remove_html_tags_string(text_string):
+    text_string = re.sub("(<.*?>).*?(<.*?>)", "", text_string)
+    return text_string
 
 
 # Remove mentions
@@ -22,10 +27,18 @@ def remove_mentions(text_string):
     text_string = text_string.str.replace("@[A-Za-z0-9]+\s?", "", regex=True)
     return text_string
 
+def remove_mentions_string(text_string):
+    text_string = re.sub("@[A-Za-z0-9]+\s?", "", text_string)
+    return text_string
+
 
 # Remove hashtags
 def remove_hashtags(text_string):
     text_string = text_string.str.replace("#[A-Za-z0-9]+\s?", "", regex=True)
+    return text_string
+
+def remove_hashtags_string(text_string):
+    text_string = re.sub("#[A-Za-z0-9]+\s?", "", text_string)
     return text_string
 
 
