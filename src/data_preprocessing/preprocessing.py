@@ -27,10 +27,18 @@ def remove_mentions(text_string):
     text_string = text_string.str.replace("@[A-Za-z0-9]+\s?", "", regex=True)
     return text_string
 
+def remove_mentions_string(text_string):
+    text_string = re.sub("@[A-Za-z0-9]+\s?", "", text_string)
+    return text_string
+
 
 # Remove hashtags
 def remove_hashtags(text_string):
     text_string = text_string.str.replace("#[A-Za-z0-9]+\s?", "", regex=True)
+    return text_string
+
+def remove_hashtags_string(text_string):
+    text_string = re.sub("#[A-Za-z0-9]+\s?", "", text_string)
     return text_string
 
 
