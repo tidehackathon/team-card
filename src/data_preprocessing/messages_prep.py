@@ -12,6 +12,18 @@ from .preprocessing import (
 )
 
 def preprocess_messages(df, column_name):
+    """Returns a preprocessed dataframe.
+    
+    Args:
+        df (dataframe): messages dataframe.
+        column_name (str): the name of the text column which will be preprocessed.
+
+    Returns:
+        df (datafarme): a preprocessed dataframe.
+                        Preprocessing steps: lowercase the text, remove html links, remove mentions (@...), remove hashtags,
+                        remove emojis, remove punctuation.
+    """
+
     # Remove short messages
     wantedRows = df[df[column_name].str.split().str.len() < 6].index
     df = df.drop(wantedRows, axis=0)
@@ -62,6 +74,16 @@ def preprocess_messages(df, column_name):
     return dfNew
 
 def preprocess_message(message):
+    """Returns a preprocessed message text in a string format.
+
+    Args:
+        article (str): the message text in a string format.
+
+    Returns:
+        article (str): the preprocessed message in a string format.
+                       Preprocessing steps: lowercase the text, remove html links, remove mentions (@...), remove hashtags,
+                       remove emojis, remove punctuation.
+    """
     message = message.lower()
     message = remove_links(message)
     message = remove_html_tags_string(message)

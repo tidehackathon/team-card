@@ -2,6 +2,16 @@ from .preprocessing import remove_links, remove_punct, remove_html_tags, remove_
 
 
 def preprocess_articles(df, column_name):
+    """Returns a preprocessed dataframe.
+    
+    Args:
+        df (dataframe): articles dataframe.
+        column_name (str): the name of the text column which will be preprocessed.
+
+    Returns:
+        df (datafarme): a preprocessed dataframe.
+                        Preprocessing steps: lowercase the text, remove html links and tags, remove punctuation.
+    """
 
     # Remove empty, duplicates
     df = df.dropna().drop_duplicates().reset_index(drop=True)
@@ -27,6 +37,15 @@ def preprocess_articles(df, column_name):
     return df
 
 def preprocess_article(article):
+    """Returns a preprocessed article text in a string format.
+
+    Args:
+        article (str): the article text in a string format.
+
+    Returns:
+        article (str): the preprocessed article in a string format.
+                       Preprocessing steps: lowercase the text, remove html links and tags, remove punctuation.
+    """
     article = article.lower()
     article = remove_links(article)
     article = remove_html_tags_string(article)

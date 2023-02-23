@@ -7,8 +7,8 @@ sputnik_df = sputnik_df.rename(columns={"Column2": "articles"})
 sputnik_df = sputnik_df.drop(["Column1"], axis=1)
 
 # Set labels
-sputnik_df["label"] = 1  # disinformation
-art_df["label"] = 0  # real facts
+sputnik_df["label"] = 0  # disinformation
+art_df["label"] = 1  # real facts
 
 articles_df = pd.concat([art_df, sputnik_df], axis=0, ignore_index=True)
 
