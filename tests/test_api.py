@@ -1,6 +1,6 @@
 import requests
 
-dl_test_dict = {"article_text": "To install PyTorch via Anaconda, use the following conda command"}
+dl_test_dict = {"article_text": "Two people were killed by Russian shelling in Kherson on Wednesday, the southern Ukrainian region's military administration said in a post on Telegram."}
 matching_test_dict = {"message_text": "i think some are actual russian bots to antagonize other nations citizens against ukraine to support russia",
                       "threshold": 0.88}
 
@@ -23,5 +23,4 @@ def test_matching_model():
     response = requests.post('http://127.0.0.1:22222/match_fake/', json=matching_test_dict)
     assert response.status_code == 200
     print(response.json()[0].get('score'))
-    assert response.json()[0].get('score') == 0.9054368138313293
-
+    assert response.json()[0].get('score') == 0.905
