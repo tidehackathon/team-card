@@ -57,3 +57,13 @@ def preprocess_messages(df, column_name):
     dfNew = dfNew.drop_duplicates().reset_index(drop=True)
 
     return dfNew
+
+def preprocess_message(message):
+    message = message.lower()
+    message = remove_links(message)
+    message = remove_html_tags(message)
+    message = remove_mentions(message)
+    message = remove_hashtags(message)
+    message = remove_emoji(message)
+    message = remove_punct(message)
+    return message

@@ -15,6 +15,11 @@ def remove_links(text_string):
 def remove_html_tags(text_string):
     text_string = text_string.apply(lambda x: re.sub("(<.*?>).*?(<.*?>)", "", x))
     return text_string
+    
+
+def remove_html_tags_string(text_string):
+    text_string = re.sub("(<.*?>).*?(<.*?>)", "", text_string)
+    return text_string
 
 
 # Remove mentions
