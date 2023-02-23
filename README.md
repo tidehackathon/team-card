@@ -1,4 +1,4 @@
-# Team CARD: infodesic
+# Team CARD: infoDesic
 
 ## Prerequisites
 - GNU Make
@@ -20,6 +20,19 @@ docker-compose up
 ```
 
 This command will build a composition of docker containers, which make up the disinformation detection tool.
+
+## Dashboard
+
+The main part of the created software is the disinformation dasboard. After running docker-compose, it should be available in the link: http://0.0.0.0/ . 
+
+
+After you open it, you will see three tabs: Disinformation Analyzer, Match disinformation cases and Model Accuracy visualization. 
+
+The *DISinformation Analyzer* tab lets you paste a url from any news site and it will tell you whether the selected article is classified as fake or neutral. The barchart below will indicate the words which made the most impact to the model, when it classifying text.
+
+The *Match DISinformation Cases* tab lets you paste a social media post or message and check if it is disinformation. The model matches the message to the known disinformation cases and displays the ones that matched. The user can also choose the threshold of the match (the higher the score, the less cases it will match).
+
+The *Model Accuracy Visualization* tab shows you the accuracy of the deep learning model. You can add the test csv file to the `resources` folder, name it `articles-test.csv` and run the `make score-dl-model` command to create you own evaluations. These evaluations will be displayed in this dashboard tab.
 
 ## API documentation
 
@@ -48,7 +61,8 @@ The disinformation cases matching API uses a database of known disinformation ca
 
 This request requires a json input file. The example json:
 ```json
-{"message_text": "The contents of the message"}
+{"message_text": "The contents of the message",
+ "threshold": 0.88}
 ```
 
 The expected result is a list of the closes disinformation cases with their certainty scores and contents:
@@ -70,7 +84,5 @@ The test file can be found in `tests/test_api.py`. You can run these tests using
 The input query variables have the following types:
 
 - "article_text": str
+- "threshold": float
 - "message_text": str
-
-
-
