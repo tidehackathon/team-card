@@ -5,12 +5,31 @@
 - Docker
 - docker-compose
 
-#### Create and activate virtual environment
+- Create and activate virtual environment
 
 ```
 make create-virtualenv
 source .venv/bin/activate
 ```
+
+- Download the model, create folder:
+```
+src/model_api/models
+```
+and store the model there with the name: `pytorch_model.bin`.
+
+- Create folder
+```
+resources
+```
+and add model testing data there with the name `articles-test.csv`. The format of the .csv file should be the following:
+
+| article         | label    |
+| --------------- | -------- |
+| Article 1 text  | 0        |
+| Article 2 text  | 1        |
+
+where 0 means *disinformation* and 1 means *neutral*.
 
 ## Running the program
 
@@ -30,9 +49,21 @@ After you open it, you will see three tabs: Disinformation Analyzer, Match disin
 
 The *DISinformation Analyzer* tab lets you paste a url from any news site and it will tell you whether the selected article is classified as fake or neutral. The barchart below will indicate the words which made the most impact to the model, when it classifying text.
 
+![alt text](img/tab1.png "Dashboard tab1")
+
 The *Match DISinformation Cases* tab lets you paste a social media post or message and check if it is disinformation. The model matches the message to the known disinformation cases and displays the ones that matched. The user can also choose the threshold of the match (the higher the score, the less cases it will match).
 
+![alt text](img/tab2.png "Dashboard tab2")
+
 The *Model Accuracy Visualization* tab shows you the accuracy of the deep learning model. You can add the test csv file to the `resources` folder, name it `articles-test.csv` and run the `make score-dl-model` command to create you own evaluations. These evaluations will be displayed in this dashboard tab.
+
+![alt text](img/tab3.png "Dashboard tab3")
+
+## Data Preprocessing step
+
+The data preprocessing was done in the following steps. Two types of data files were preprocessed: articles and social media messages (or posts). After the preprocessing, 538 articles and 624 982 messages were left.
+
+![alt text](img/preprocessing.png "Data preprocessing")
 
 ## API documentation
 
