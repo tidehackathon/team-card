@@ -102,9 +102,9 @@ content = html.Div([
     html.H2("infoDesic dashboard"),
     dcc.Tabs(id='tabs', value='tab-1', children=[
         html.Div(className="left-circle"),
-        dcc.Tab(label='Tab 1', value='tab-1', className="tab", selected_className="tab-selected"),
-        dcc.Tab(label='Tab 2', value='tab-2', className="tab", selected_className="tab-selected"),
-        dcc.Tab(label='Tab 3', value='tab-3', className="tab", selected_className="tab-selected"),
+        dcc.Tab(label='DISinformation Analyzer', value='tab-1', className="tab", selected_className="tab-selected"),
+        dcc.Tab(label='Match DISinformation Cases', value='tab-2', className="tab", selected_className="tab-selected"),
+        dcc.Tab(label='Model Accuracy Visualization', value='tab-3', className="tab", selected_className="tab-selected"),
         html.Div(className="right-circle"),
     ]),
     html.Div(id='tabs-content')

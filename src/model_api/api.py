@@ -15,6 +15,6 @@ async def check_fake(items: Article):
     data = json.loads(items.json())
     prob = predictor(data['article_text'])
     return {"result": bool(not(np.argmax(prob))),
-            "scoere": float(np.max(prob)),
+            "scoere": round(float(np.max(prob)), 3),
             "explanation": get_explanation(data['article_text'])}
 
